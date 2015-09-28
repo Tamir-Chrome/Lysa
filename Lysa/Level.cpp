@@ -126,6 +126,8 @@ void Level::movePlayer(char in, Player &player)
 	case 13: // ENTER
 		processPlayerMove(player, playerX, playerY, '.');
 		break;
+	default:
+		break;
 	}
 
 }
@@ -262,15 +264,17 @@ void Level::battleMonster(Player &player, int targetX, int targetY)
 			attackResluts = _enemies[i].takeDamage(attackRoll);
 			if (attackResluts) // if attackResluts is true, enemy is dead
 			{
-				printf("Enemy died. You got %d EXP\n", attackResluts);
+				printf("Enemy died. You got %d EXP\n", _enemies[i].getExp());
+
+				system("PAUSE");
+				player.addExp(_enemies[i].getExp()); // adds exp for killing the enemy
+				setTile(targetX, targetY, ' ');
 
 				_enemies[i] = _enemies.back(); //copies the last enemy to the enemy that just died
 				_enemies.pop_back(); // pops the last enemy that we just copied
 				i--; // so we dont the skip the enemy we just copied
 
-				system("PAUSE");
-				player.addExp(_enemies[i].getExp()); // adds exp for killing the enemy
-				setTile(targetX, targetY, ' ');
+				//continue;
 				return;
 			}
 
@@ -301,6 +305,5 @@ void Level::setTile(int x, int y, char tile)
 //Getters
 char Level::getTile(int x, int y)
 {
-	printf("%d\n", _levelData[y][x]);
-	return (_levelData[y][x]);
+	return _levelData[y][x];
 }

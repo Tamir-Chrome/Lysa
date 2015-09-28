@@ -27,6 +27,6 @@ void Bio::setPosition(int x, int y)
 //Getters
 void Bio::getPosition(int &x, int &y)
 {
-	x = _y;
-	y = _x;
+	x = _x;
+	y = _y;
 }

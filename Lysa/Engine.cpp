@@ -20,11 +20,17 @@ void Engine::playGame()
 
 	while (isDone != true)
 	{
-		system("cls");
-		_level.print();
+		clearAndPrint();
 		playerMove();
+		clearAndPrint();
 		_level.updateEnemy(_player);
 	}
+}
+
+void Engine::clearAndPrint()
+{
+	system("cls");
+	_level.print();
 }
 
 void Engine::playerMove()
