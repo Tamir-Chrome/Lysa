@@ -18,10 +18,6 @@ void Player::init(int level, int health, int attack, int defense, int exp)
 	_exp = exp;
 }
 
-int Player::attack()
-{
-	return _attack;
-}
 int Player::takeDamage(int attack)
 {
 	attack -= _defense;

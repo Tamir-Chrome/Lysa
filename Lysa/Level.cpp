@@ -300,23 +300,6 @@ void Level::setTile(int x, int y, char tile)
 {
 	_levelData[y][x] = tile;
 }
-/*
-void setNameMaps()
-{
-ifstream mapsNamesFile;
-string nameMap;
-mapsNamesFile.open("gameData\\mapList\\MapList.txt");
-if (mapsNamesFile.fail())
-{
-perror("gameData\\mapList\\MapList.txt");
-system("PAUSE");
-exit(1);
-}
-while (getline(mapsNamesFile, nameMap))
-{
-_levelData.push_back(line);
-}
-}*/
 
 //Getters
 char Level::getTile(int x, int y)

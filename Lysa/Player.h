@@ -14,7 +14,7 @@ public:
 
 	//Getters
 	void getPosition(int &x, int &y);
-	int attack();
+	int attack() { return _attack; };
 
 private:
 
