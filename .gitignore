@@ -205,3 +205,6 @@ Debug\*
 
 *.vcxproj
 *.filters
+
+*.sdf
+*.sln
