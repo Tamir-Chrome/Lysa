@@ -90,7 +90,7 @@ void Level::load(string mapName, Player &player)
 void Level::print()
 {
 	string line;
-	for (int i = 0; i < _levelData.size(); i++)
+	for (int i = 0; i < (int)_levelData.size(); i++)
 	{
 		printf("%s\n", _levelData[i].c_str());
 	}
@@ -125,10 +125,6 @@ void Level::movePlayer(char in, Player &player)
 		break;
 	case 13: // ENTER
 		processPlayerMove(player, playerX, playerY, '.');
-		break;
-	default:
-		printf("Wrong input\n");
-		system("PAUSE");
 		break;
 	}
 
@@ -189,7 +185,7 @@ void Level::updateEnemy(Player &player)
 
 	player.getPosition(playerX, playerY);
 
-	for (int i = 0; i < _enemies.size(); i++) {
+	for (int i = 0; i < (int)_enemies.size(); i++) {
 
 		enemyMove = _enemies[i].getEnemyMove(playerX, playerY);
 		_enemies[i].getPosition(enemyX, enemyY);
@@ -251,19 +247,20 @@ void Level::battleMonster(Player &player, int targetX, int targetY)
 {
 	int playerX, enemyX;
 	int playerY, enemyY;
-	int attackRoll, attackResluts;
+	int attackRoll;
+	bool attackResluts;
 
 	player.getPosition(playerX, playerY);
-	for (int i = 0; i < _enemies.size(); i++)
+	for (int i = 0; i < (int)_enemies.size(); i++)
 	{
 		_enemies[i].getPosition(enemyX, enemyY);
 		if (targetX == enemyX && targetY == enemyY)
 		{
 			//battle
-			attackRoll = player.attack();
-			printf("Player attacked %s by %d damage\n", _enemies[i].getName().c_str(), attackRoll);
+			attackRoll = player.getAttack();
+			printf("%s attacked %s by %d damage\n", player.getName().c_str(), _enemies[i].getName().c_str(), attackRoll);
 			attackResluts = _enemies[i].takeDamage(attackRoll);
-			if (attackResluts != 0)
+			if (attackResluts) // if attackResluts is true, enemy is dead
 			{
 				printf("Enemy died. You got %d EXP\n", attackResluts);
 
@@ -272,20 +269,20 @@ void Level::battleMonster(Player &player, int targetX, int targetY)
 				i--; // so we dont the skip the enemy we just copied
 
 				system("PAUSE");
-				player.addExp(attackResluts); // adds exp for killing the enemy
+				player.addExp(_enemies[i].getExp()); // adds exp for killing the enemy
 				setTile(targetX, targetY, ' ');
 				return;
 			}
 
 			//Enemy turn
-			attackRoll = _enemies[i].attack();
+			attackRoll = _enemies[i].getAttack();
 			attackResluts = player.takeDamage(attackRoll);
-			printf("%s attacked Player by %d damage\n", _enemies[i].getName().c_str(), attackRoll);
+			printf("%s attacked %s by %d damage\n", _enemies[i].getName().c_str(), player.getName().c_str(), attackRoll);
 			system("PAUSE");
-			if (attackResluts != 0)
+			if (attackResluts)// if attackResluts is true, player is dead
 			{
 				setTile(playerX, playerY, 'X');
-				printf("You died. You collected %d EXP\n", attackResluts);
+				printf("You died. You collected %d EXP\n", player.getExp());
 				//TODO: Handle player's death(and ask for save)
 				system("PAUSE");
 				exit(1);
@@ -304,5 +301,6 @@ void Level::setTile(int x, int y, char tile)
 //Getters
 char Level::getTile(int x, int y)
 {
-	return _levelData[y][x];
+	printf("%d\n", _levelData[y][x]);
+	return (_levelData[y][x]);
 }

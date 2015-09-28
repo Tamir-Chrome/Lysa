@@ -9,6 +9,7 @@ using namespace std;
 
 Engine::Engine(string levelFileName)
 {
+
 	_player.init(1, 100, 5, 0, 0);
 	_level.load(levelFileName, _player);
 }

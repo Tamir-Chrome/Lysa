@@ -18,8 +18,6 @@ public:
 
 	//Setters
 	void setTile(int x, int y, char tile);
-	//void setNameMaps(); // sets the names from a file called mapList.txt
-	//void addToMapList();
 	void processLevel(Player &player);
 
 	//Getters
