@@ -194,3 +194,14 @@ FakesAssemblies/
 
 # Visual Studio 6 workspace options file
 *.opt
+
+
+##############
+## Custum
+##############
+
+Debug/*
+Debug\*
+
+*.vcxproj
+*.filters
