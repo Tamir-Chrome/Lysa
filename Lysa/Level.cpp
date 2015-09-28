@@ -20,9 +20,9 @@ void Level::processLevel(Player &player)
 {
 	char tile;
 	_enemies.clear();
-	for (int i = 0; i < _levelData.size(); i++)
+	for (int i = 0; i < (int)_levelData.size(); i++)
 	{
-		for (int j = 0; j < _levelData[i].size(); j++)
+		for (int j = 0; j < (int)_levelData[i].size(); j++)
 		{
 			tile = _levelData[i][j];
 			switch (tile)
@@ -69,7 +69,7 @@ void Level::load(string mapName, Player &player)
 
 	bool isMapListed = false; // is map in mapList in vector
 
-	for (int i = 0; i < _mapList.size(); i++)
+	for (int i = 0; i < (int)_mapList.size(); i++)
 	{
 		if (mapName == _mapList[i].getMapName())
 		{

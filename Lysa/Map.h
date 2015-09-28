@@ -23,4 +23,3 @@ private:
 	std::string _name;
 	std::vector<Linker> _linkers;
 };
-

@@ -19,4 +19,3 @@ private:
 	int _cordX, _cordY;
 	std::string _linkTo;
 };
-

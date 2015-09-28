@@ -11,4 +11,3 @@ Linker::Linker(int x, int y, string nameOfLinkedMap)
 	_cordY = y;
 	_linkTo = nameOfLinkedMap;
 }
-
