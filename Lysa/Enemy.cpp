@@ -13,48 +13,9 @@ Enemy::Enemy(string name, char tileSign, int lvl, int attack, int defense, int h
 	_attack = attack;
 	_defense = defense;
 	_health = health;
-	_expAmount = exp;
+	_exp = exp;
 }
 
-int Enemy::attack()
-{
-	return _attack;
-}
-
-int Enemy::takeDamage(int attack)
-{
-	attack -= _defense;
-	if (attack > 0)
-	{
-		_health -= attack;
-		if (_health <= 0) {
-			return _expAmount; // maybe add + _health
-		}
-	}
-	return 0;
-}
-
-void Enemy::setPosition(int x, int y)
-{
-	_x = x;
-	_y = y;
-}
-
-void Enemy::getPosition(int &x, int &y)
-{
-	x = _x;
-	y = _y;
-}
-
-char Enemy::getTileSign()
-{
-	return _tileSign;
-}
-
-string Enemy::getName()
-{
-	return _name;
-}
 
 char Enemy::getEnemyMove(int playerX, int playerY)
 {
@@ -94,10 +55,10 @@ char Enemy::getEnemyMove(int playerX, int playerY)
 				return 'e'; // move top right
 			}
 			else if (dx < 0 && dy < 0) {
-				return 'z'; // bottom left
+				return 'c'; // bottom left
 			}
-			else { // dx > 0 && dy < 0
-				return 'c'; // bottom right
+			else if (dx > 0 && dy < 0){ // 
+				return 'z'; // bottom right
 			}
 		}
 	}
