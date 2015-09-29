@@ -55,10 +55,10 @@ char Enemy::getEnemyMove(int playerX, int playerY)
 				return 'e'; // move top right
 			}
 			else if (dx < 0 && dy < 0) {
-				return 'z'; // bottom left
+				return 'c'; // bottom left
 			}
-			else { // dx > 0 && dy < 0
-				return 'c'; // bottom right
+			else if (dx > 0 && dy < 0){ // 
+				return 'z'; // bottom right
 			}
 		}
 	}
