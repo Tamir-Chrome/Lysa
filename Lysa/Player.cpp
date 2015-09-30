@@ -1,6 +1,5 @@
 #include "Player.h"
-#include <random>
-#include <ctime>
+#include <iostream>
 
 using namespace std;
 
@@ -9,32 +8,17 @@ Player::Player()
 
 }
 
-void Player::init(int level, int health, int attack, int defense, int exp)
+void Player::init(int level, int health, int attack, int defense, int exp, BioStatus bio_status)
 {
+	cout << "Enter name: ";
+	cin >> _name;
 	_level = level;
-	_health = health;
 	_attack = attack;
 	_defense = defense;
+	_health = health;
 	_exp = exp;
-}
-
-int Player::takeDamage(int attack)
-{
-	attack -= _defense;
-	if (attack > 0)
-	{
-		_health -= attack;
-		if (_health <= 0)
-			return (_exp + _level * 50);
-	}
-	return 0;
-}
-
-//Setters
-void Player::setPosition(int x, int y)
-{
-	_x = x;
-	_y = y;
+	_bio_status = bio_status;
+	_faceTile = '^';
 }
 
 void Player::addExp(int exp)
@@ -53,8 +37,3 @@ void Player::addExp(int exp)
 }
 
 //Getters
-void Player::getPosition(int &x, int &y)
-{
-	x = _x;
-	y = _y;
-}

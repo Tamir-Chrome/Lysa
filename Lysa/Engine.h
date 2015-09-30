@@ -12,10 +12,13 @@ public:
 
 	Engine(std::string levelFileName);
 	void playGame();
-	void playerMove();
+	
 
 
 private:
+	void clearAndPrint();
+	void playerMove();
+
 	Player _player;
 	Level _level;
 };

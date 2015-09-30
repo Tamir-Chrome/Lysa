@@ -5,56 +5,18 @@
 
 using namespace std;
 
-Enemy::Enemy(string name, char tileSign, int lvl, int attack, int defense, int health, int exp)
+Enemy::Enemy(string name, char faceTile, int lvl, int attack, int defense, int health, int exp, BioStatus bio_status)
 {
 	_name = name;
-	_tileSign = tileSign;
+	_faceTile = faceTile;
 	_level = lvl;
 	_attack = attack;
 	_defense = defense;
 	_health = health;
-	_expAmount = exp;
+	_exp = exp;
+	_bio_status = bio_status;
 }
 
-int Enemy::attack()
-{
-	return _attack;
-}
-
-int Enemy::takeDamage(int attack)
-{
-	attack -= _defense;
-	if (attack > 0)
-	{
-		_health -= attack;
-		if (_health <= 0) {
-			return _expAmount; // maybe add + _health
-		}
-	}
-	return 0;
-}
-
-void Enemy::setPosition(int x, int y)
-{
-	_x = x;
-	_y = y;
-}
-
-void Enemy::getPosition(int &x, int &y)
-{
-	x = _x;
-	y = _y;
-}
-
-char Enemy::getTileSign()
-{
-	return _tileSign;
-}
-
-string Enemy::getName()
-{
-	return _name;
-}
 
 char Enemy::getEnemyMove(int playerX, int playerY)
 {
