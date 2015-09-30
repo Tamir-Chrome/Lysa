@@ -5,15 +5,16 @@
 
 using namespace std;
 
-Enemy::Enemy(string name, char tileSign, int lvl, int attack, int defense, int health, int exp)
+Enemy::Enemy(string name, char faceTile, int lvl, int attack, int defense, int health, int exp, BioStatus bio_status)
 {
 	_name = name;
-	_tileSign = tileSign;
+	_faceTile = faceTile;
 	_level = lvl;
 	_attack = attack;
 	_defense = defense;
 	_health = health;
 	_exp = exp;
+	_bio_status = bio_status;
 }
 
 

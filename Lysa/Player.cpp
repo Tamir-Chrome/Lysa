@@ -8,7 +8,7 @@ Player::Player()
 
 }
 
-void Player::init(int level, int health, int attack, int defense, int exp)
+void Player::init(int level, int health, int attack, int defense, int exp, BioStatus bio_status)
 {
 	cout << "Enter name: ";
 	cin >> _name;
@@ -17,6 +17,8 @@ void Player::init(int level, int health, int attack, int defense, int exp)
 	_defense = defense;
 	_health = health;
 	_exp = exp;
+	_bio_status = bio_status;
+	_faceTile = '^';
 }
 
 void Player::addExp(int exp)

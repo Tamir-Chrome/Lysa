@@ -9,8 +9,7 @@ using namespace std;
 
 Engine::Engine(string levelFileName)
 {
-
-	_player.init(1, 100, 5, 0, 0);
+	_player.init(1, 100, 5, 0, 0, PLAYER);
 	_level.load(levelFileName, _player);
 }
 
@@ -20,18 +19,12 @@ void Engine::playGame()
 
 	while (isDone != true)
 	{
-		clearAndPrint();
+		
 		playerMove();
-		clearAndPrint();
 		_level.updateEnemy(_player);
 	}
 }
 
-void Engine::clearAndPrint()
-{
-	system("cls");
-	_level.print();
-}
 
 void Engine::playerMove()
 {

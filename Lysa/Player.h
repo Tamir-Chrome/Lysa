@@ -5,10 +5,11 @@ class Player : public Bio
 {
 public:
 	Player();
-	void init(int level, int health, int attack, int defense, int exp);
+	void init(int level, int health, int attack, int defense, int exp, BioStatus bio_status);
 
 	//Setters
 	void addExp(int exp);
+	void setFaceDirection(char newFace) { _faceTile = newFace; };
 
 	//Getters
 

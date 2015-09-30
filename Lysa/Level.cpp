@@ -31,15 +31,15 @@ void Level::processLevel(Player &player)
 				player.setPosition(j, i);
 				break;
 			case 'A': // AV BAIT
-				_enemies.push_back(Enemy("Avv Bait", 'A', 1, 3, 1, 10, 30));
+				_enemies.push_back(Enemy("Avv Bait", 'A', 1, 3, 1, 10, 30, ENEMY));
 				_enemies[_enemies.size() - 1].setPosition(j, i);
 				break;
 			case 'S':
-				_enemies.push_back(Enemy("Sachena", 'S', 2, 6, 2, 15, 50));
+				_enemies.push_back(Enemy("Sachena", 'S', 2, 6, 2, 15, 50, ENEMY));
 				_enemies[_enemies.size() - 1].setPosition(j, i);
 				break;
 			case 'M':
-				_enemies.push_back(Enemy("Madregot Naot", 'M', 100, 200, 100, 0, 200));
+				_enemies.push_back(Enemy("Madregot Naot", 'M', 100, 200, 100, 0, 200, ENEMY));
 				_enemies[_enemies.size() - 1].setPosition(j, i);
 				break;
 			}
@@ -51,7 +51,7 @@ void Level::load(string mapName, Player &player)
 {
 	ifstream inputFile;
 	string line;
-	string address = string("gameDataFiles\\mapList\\").append(mapName).append(".txt");
+	string address = string("gameDataFiles\\mapList\\" + mapName + ".txt");
 	inputFile.open(address); // file opens correctly
 	if (inputFile.fail())
 	{
@@ -66,6 +66,8 @@ void Level::load(string mapName, Player &player)
 	}
 
 	inputFile.close();
+
+	processLevel(player); // init level: enemies, NPCs, player...
 
 	bool isMapListed = false; // is map in mapList in vector
 
@@ -84,17 +86,20 @@ void Level::load(string mapName, Player &player)
 		_mapList.push_back(_loadedMap);
 	}
 
-	processLevel(player); // init level: enemies, NPCs, player...
-}
-
-void Level::print()
-{
-	string line;
+	//DRAW MAP HERE
+	system("cls");
 	for (int i = 0; i < (int)_levelData.size(); i++)
 	{
 		printf("%s\n", _levelData[i].c_str());
 	}
-	printf("\n");
+	drawBio(player);
+}
+
+void Level::drawBio(Player &player)
+{
+	player.draw();
+	for (int i = 0; i < (int)_enemies.size(); i++)
+		_enemies[i].draw();
 }
 
 void Level::movePlayer(char in, Player &player)
@@ -138,15 +143,20 @@ void Level::processPlayerMove(Player &player, int targetX, int targetY, char pla
 	int playerY;
 	player.getPosition(playerX, playerY);
 
-	char moveTile = getTile(targetX, targetY);
-
-	switch (moveTile)
+	char targetTile = getTile(targetX, targetY);
+	
+	switch (targetTile)
 	{
 	case ' ':
-		setTile(targetX, targetY, playerFace);
-		if (getTile(playerX, playerY) != '\\')
-			setTile(playerX, playerY, ' ');
+		setTile(targetX, targetY, '^'); // sets player in map vector
+		if (getTile(playerX, playerY) != '\\') {
+			setTile(playerX, playerY, ' '); // remove last tile
+			putCharAt(playerX, playerY, ' '); // remove last tile from console
+		}
 		player.setPosition(targetX, targetY);
+		player.setFaceDirection(playerFace);
+		player.draw();
+		//battleMonster(player, targetX, targetY);
 		break;
 	case '#':
 		break;
@@ -170,12 +180,15 @@ void Level::processPlayerMove(Player &player, int targetX, int targetY, char pla
 			}
 		}
 		else {
-			if (getTile(playerX, playerY) != '\\')
-				setTile(playerX, playerY, ' ');
+			if (getTile(playerX, playerY) != '\\') { // only if he didnt enter a door from another door
+				setTile(playerX, playerY, ' '); // remove last tile
+				putCharAt(playerX, playerY, ' ');
+			}
 			player.setPosition(targetX, targetY);
 		}
 	default:
 		battleMonster(player, targetX, targetY);
+		break;
 	}
 }
 
@@ -232,20 +245,23 @@ void Level::processEnemyMove(Player &player, int enemyIndex, int targetX, int ta
 	switch (moveTile)
 	{
 	case ' ':
-		setTile(targetX, targetY, _enemies[enemyIndex].getTileSign());
+		// remove last enemy position
 		setTile(enemyX, enemyY, ' ');
-		_enemies[enemyIndex].setPosition(targetX, targetY);
+		putCharAt(enemyX, enemyY, ' '); 
+
+		// set new enemy position
+		setTile(targetX, targetY, _enemies[enemyIndex].getTileSign());
+		_enemies[enemyIndex].setPosition(targetX, targetY); 
+		_enemies[enemyIndex].draw(); // draw new position on console
+		break;
 	case '^':
-	case '>':
-	case '<':
-	case 'v':
-		battleMonster(player, enemyX, enemyY);
+		battleMonster(player, targetX, targetY, enemyIndex);
 		break;
 	}
 
 }
 
-void Level::battleMonster(Player &player, int targetX, int targetY)
+void Level::battleMonster(Player &player, int targetX, int targetY, int enemyIndex)
 {
 	int playerX, enemyX;
 	int playerY, enemyY;
@@ -253,57 +269,94 @@ void Level::battleMonster(Player &player, int targetX, int targetY)
 	bool attackResluts;
 
 	player.getPosition(playerX, playerY);
-	for (int i = 0; i < (int)_enemies.size(); i++)
+
+	if (enemyIndex != -1) // fight from enemy to player
 	{
-		_enemies[i].getPosition(enemyX, enemyY);
-		if (targetX == enemyX && targetY == enemyY)
+		_enemies[enemyIndex].getPosition(enemyX, enemyY);
+		if (targetX == playerX && targetY == playerY)
 		{
 			//battle
-			attackRoll = player.getAttack();
-			printf("%s attacked %s by %d damage\n", player.getName().c_str(), _enemies[i].getName().c_str(), attackRoll);
-			attackResluts = _enemies[i].takeDamage(attackRoll);
-			if (attackResluts) // if attackResluts is true, enemy is dead
-			{
-				printf("Enemy died. You got %d EXP\n", _enemies[i].getExp());
-
-				system("PAUSE");
-				player.addExp(_enemies[i].getExp()); // adds exp for killing the enemy
-				setTile(targetX, targetY, ' ');
-
-				_enemies[i] = _enemies.back(); //copies the last enemy to the enemy that just died
-				_enemies.pop_back(); // pops the last enemy that we just copied
-				i--; // so we dont the skip the enemy we just copied
-
-				//continue;
-				return;
-			}
-
 			//Enemy turn
-			attackRoll = _enemies[i].getAttack();
+			attackRoll = _enemies[enemyIndex].getAttack();
 			attackResluts = player.takeDamage(attackRoll);
-			printf("%s attacked %s by %d damage\n", _enemies[i].getName().c_str(), player.getName().c_str(), attackRoll);
-			system("PAUSE");
+			setCursorAt(0, _levelData.size());
+			printf("%s attacked %s by %d damage\n", _enemies[enemyIndex].getName().c_str(), player.getName().c_str(), attackRoll);
 			if (attackResluts)// if attackResluts is true, player is dead
 			{
-				setTile(playerX, playerY, 'X');
+				putCharAt(playerX, playerY, 'X'); // clears the enemy
 				printf("You died. You collected %d EXP\n", player.getExp());
 				//TODO: Handle player's death(and ask for save)
-				system("PAUSE");
+				Pause();
 				exit(1);
+			}
+
+			//Player turn
+			attackRoll = player.getAttack();
+			printf("%s attacked %s by %d damage\n", player.getName().c_str(), _enemies[enemyIndex].getName().c_str(), attackRoll);
+			Pause();
+			attackResluts = _enemies[enemyIndex].takeDamage(attackRoll);
+			if (attackResluts) // if attackResluts is true, enemy is dead
+			{
+				printf("Enemy died. You got %d EXP\n", _enemies[enemyIndex].getExp());
+
+				Pause();
+				player.addExp(_enemies[enemyIndex].getExp()); // adds exp for killing the enemy
+				// clears the enemy
+				setTile(enemyX, enemyY, ' ');
+				putCharAt(enemyX, enemyY, ' '); 
+				_enemies[enemyIndex] = _enemies.back(); //copies the last enemy to the enemy that just died
+				_enemies.pop_back(); // pops the last enemy that we just copied
+
+				//continue;
+				//return;
 			}
 		}
 	}
+	else // fight from player to enemy
+	{
+		for (int i = 0; i < (int)_enemies.size(); i++)
+		{
+			_enemies[i].getPosition(enemyX, enemyY);
+			if (targetX == enemyX && targetY == enemyY)
+			{
+				//battle
+				//Player turn
+				attackRoll = player.getAttack();
+				setCursorAt(0, _levelData.size());
+				printf("%s attacked %s by %d damage\n", player.getName().c_str(), _enemies[i].getName().c_str(), attackRoll);
+				attackResluts = _enemies[i].takeDamage(attackRoll);
+				if (attackResluts) // if attackResluts is true, enemy is dead
+				{
+					printf("Enemy died. You got %d EXP\n", _enemies[i].getExp());
 
-}
+					Pause();
+					player.addExp(_enemies[i].getExp()); // adds exp for killing the enemy
+					// clears the enemy
+					setTile(enemyX, enemyY, ' ');
+					putCharAt(enemyX, enemyY, ' ');
+					_enemies[i] = _enemies.back(); //copies the last enemy to the enemy that just died
+					_enemies.pop_back(); // pops the last enemy that we just copied
+					i--; // so we dont the skip the enemy we just copied
 
-//Setters
-void Level::setTile(int x, int y, char tile)
-{
-	_levelData[y][x] = tile;
-}
+					//continue;
+					break;
+				}
 
-//Getters
-char Level::getTile(int x, int y)
-{
-	return _levelData[y][x];
+				//Enemy turn
+				attackRoll = _enemies[i].getAttack();
+				attackResluts = player.takeDamage(attackRoll);
+				printf("%s attacked %s by %d damage\n", _enemies[i].getName().c_str(), player.getName().c_str(), attackRoll);
+				Pause();
+				if (attackResluts)// if attackResluts is true, player is dead
+				{
+					putCharAt(playerX, playerY, 'X'); // clears the enemy
+					printf("You died. You collected %d EXP\n", player.getExp());
+					//TODO: Handle player's death(and ask for save)
+					Pause();
+					exit(1);
+				}
+			}
+		}
+	}
+	clearFrom(_levelData.size());
 }

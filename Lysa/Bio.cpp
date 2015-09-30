@@ -17,6 +17,16 @@ bool Bio::takeDamage(int attack)
 	return false;
 }
 
+void Bio::draw()
+{
+	setCursorAt(_x, _y);
+	setTextColor(_bio_status);
+	putchar(_faceTile);
+	//reset cursor
+	setTextColor(7);
+	setCursorAt(0, 0);
+}
+
 //Setters
 void Bio::setPosition(int x, int y)
 {
