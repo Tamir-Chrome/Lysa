@@ -1,19 +1,25 @@
 #include "Utility.h"
-#include <Windows.h>
 #include <conio.h>
 #include <iostream>
 
-HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+HANDLE consoleOutput, consoleInput;
+DWORD fdwSaveOldMode; // old console mode
+
+void setConsole(HANDLE &output, HANDLE &input, DWORD oldMode)
+{
+	consoleInput = input;
+	consoleOutput = output;
+	fdwSaveOldMode = oldMode;
+}
 
 void setCursorAt(int x, int y)
 {
 	COORD tileOnConsole;
-	
 	//sets COORDS to give x and y
 	tileOnConsole.X = x;
 	tileOnConsole.Y = y;
 
-	SetConsoleCursorPosition(console, tileOnConsole);
+	SetConsoleCursorPosition(consoleOutput, tileOnConsole);
 }
 
 void putCharAt(int x, int y, char c)
@@ -29,12 +35,12 @@ void clearFrom(int y)
 	int tempVar;
 	cords.X = 0;
 	cords.Y = y;
-	FillConsoleOutputCharacter(console, ' ', 1000, cords, (LPDWORD)&tempVar);
+	FillConsoleOutputCharacter(consoleOutput, ' ', 1000, cords, (LPDWORD)&tempVar);
 }
 
 void setTextColor(int colorValue)
 {
-	SetConsoleTextAttribute(console, (WORD) colorValue);
+	SetConsoleTextAttribute(consoleOutput, (WORD)colorValue);
 }
 
 int getMergedColor(int backgroundColor, int foregroundColor)
@@ -47,4 +53,23 @@ void Pause(const char* printText)
 	if (printText)
 		std::cout << printText;
 	_getch();
+}
+
+//Error
+
+void ErrorExit(LPSTR lpszMessage)
+{
+	fprintf(stderr, "%s\n", lpszMessage);
+
+	// Restore input mode on exit.
+
+	GameExit();
+	
+}
+
+void GameExit()
+{
+	SetConsoleMode(consoleOutput, fdwSaveOldMode);
+	SetConsoleMode(consoleInput, fdwSaveOldMode);
+	exit(1);
 }

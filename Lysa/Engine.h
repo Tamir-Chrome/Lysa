@@ -16,10 +16,15 @@ public:
 
 
 private:
-	void clearAndPrint();
-	void playerMove();
+	char inputEventHandler(); // retruns the pressed key
+	char KeyEvent(KEY_EVENT_RECORD ker); // retruns the pressed key
 
 	Player _player;
 	Level _level;
+
+	//Input handler stuff
+	DWORD _fdwMode; // new mode
+	HANDLE _consoleOutput, _consoleInput;
+	DWORD _fdwSaveOldMode; // old console mode
 };
 

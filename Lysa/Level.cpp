@@ -128,8 +128,11 @@ void Level::movePlayer(char in, Player &player)
 	case 'D':
 		processPlayerMove(player, playerX + 1, playerY, '>');
 		break;
-	case 13: // ENTER
+	case K_ENTER: // ENTER
 		processPlayerMove(player, playerX, playerY, '.');
+		break;
+	case K_ESC:
+		GameExit();
 		break;
 	default:
 		break;
@@ -287,7 +290,7 @@ void Level::battleMonster(Player &player, int targetX, int targetY, int enemyInd
 				printf("You died. You collected %d EXP\n", player.getExp());
 				//TODO: Handle player's death(and ask for save)
 				Pause();
-				exit(1);
+				GameExit();
 			}
 
 			//Player turn
@@ -353,7 +356,7 @@ void Level::battleMonster(Player &player, int targetX, int targetY, int enemyInd
 					printf("You died. You collected %d EXP\n", player.getExp());
 					//TODO: Handle player's death(and ask for save)
 					Pause();
-					exit(1);
+					GameExit();
 				}
 			}
 		}
